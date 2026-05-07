@@ -1,0 +1,16 @@
+src/
+  ├── app/
+  │    ├── (dashboard)/
+  │    │    ├── estoque/        # Suas funcionalidades
+  │    │    ├── compras/        # Painel do comprador
+  │    │    └── relatorios/     # Visão do dono
+  │    └── login/
+  ├── components/
+  │    ├── ui/                  # Botões, Inputs, Cards (Tailwind)
+  │    ├── estoque/             # FormEntrada, ListaLotes
+  │    └── shared/              # Navbar, Sidebar
+  ├── lib/
+  │    ├── supabase.ts          # Configuração do cliente Supabase
+  │    └── utils.ts             # Cálculos de data de validade
+  └── types/
+       └── database.ts          # Interfaces do TypeScript para as tabelas
