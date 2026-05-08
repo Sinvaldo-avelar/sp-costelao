@@ -1,6 +1,10 @@
 'use client'
 import { useState, useEffect, useRef } from 'react'
 import { supabase } from '../lib/supabase'
+import { produtoSchema } from '../lib/validacao'
+import { logEvento } from '../lib/logger'
+import { registrarAuditoria } from '../lib/auditoria'
+import toast from 'react-hot-toast'
 
 export default function FormEntradaLote() {
   const [produtos, setProdutos] = useState<any[]>([])
@@ -42,12 +46,25 @@ export default function FormEntradaLote() {
 
   async function salvarLote(e: React.FormEvent) {
     e.preventDefault()
-    if (!produtoSelecionado) return alert("Por favor, selecione um produto da lista!")
-    
+    if (!produtoSelecionado) return toast.error("Por favor, selecione um produto da lista!")
+
     const qtdNum = parseFloat(quantidade.replace(',', '.'))
-    if (isNaN(qtdNum) || qtdNum <= 0) return alert("Quantidade inválida!")
+    if (isNaN(qtdNum) || qtdNum <= 0) return toast.error("Quantidade inválida!")
+
+    // Validação com Zod
+    const validacao = produtoSchema.safeParse({
+      nome: produtoSelecionado.nome,
+      quantidade: qtdNum,
+      unidade: produtoSelecionado.unidade || 'un',
+      lote: loteNumero
+    })
+    if (!validacao.success) {
+      toast.error('Erro de validação: ' + validacao.error.errors.map(e => e.message).join(', '))
+      return
+    }
 
     setCarregando(true)
+    logEvento('entrada_estoque_iniciada', { produtoId: produtoSelecionado.id, quantidade: qtdNum })
 
     // 1. Registra o novo Lote com a sua regra de alerta personalizada
     const { error: erroLote } = await supabase.from('lotes').insert([
@@ -58,12 +75,13 @@ export default function FormEntradaLote() {
         data_validade: validade,
         nf_entrada: nf,
         numero_lote: loteNumero,
-        dias_alerta_vencimento: parseInt(diasAlerta) // <--- Salva sua configuração personalizada
+        dias_alerta_vencimento: parseInt(diasAlerta)
       }
     ])
 
     if (erroLote) {
-      alert('Erro ao salvar lote: ' + erroLote.message)
+      logEvento('erro_entrada_estoque', { erro: erroLote.message })
+      toast.error('Erro ao salvar lote: ' + erroLote.message)
     } else {
       await supabase.from('historico_estoque').insert([{
         tipo: 'ENTRADA',
@@ -71,9 +89,17 @@ export default function FormEntradaLote() {
         quantidade: qtdNum,
         destino: `Entrada NF: ${nf || 'S/N'}`,
       }])
-
-      alert(`✅ Entrada de ${produtoSelecionado.nome.toUpperCase()} registrada com alerta de ${diasAlerta} dias!`)
-      window.location.reload()
+      registrarAuditoria('entrada_estoque', 'usuario_atual', {
+        produtoId: produtoSelecionado.id,
+        quantidade: qtdNum,
+        lote: loteNumero,
+        nf,
+        validade,
+        diasAlerta
+      })
+      logEvento('entrada_estoque_sucesso', { produtoId: produtoSelecionado.id, quantidade: qtdNum })
+      toast.success(`Entrada de ${produtoSelecionado.nome.toUpperCase()} registrada com sucesso!`, { icon: '📦' })
+      setTimeout(() => window.location.reload(), 1500)
     }
     setCarregando(false)
   }

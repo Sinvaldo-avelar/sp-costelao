@@ -14,3 +14,27 @@ src/
   │    └── utils.ts             # Cálculos de data de validade
   └── types/
        └── database.ts          # Interfaces do TypeScript para as tabelas
+
+       Ótima observação! Aqui está o que acontece e o que pode ser melhorado:
+
+Usuário "usuário_demo": Esse valor aparece quando não há um usuário autenticado no contexto. O ideal é que, ao fazer login, o sistema registre o nome do usuário logado (via Supabase Auth, por exemplo) e use esse dado em todas as ações, inclusive na saída de produtos.
+
+Cadastro de usuário: Sim, para registrar corretamente quem fez a saída, é necessário que o usuário esteja autenticado. Se ainda não há tela de login/cadastro, é importante implementar isso e garantir que o AuthContext traga o usuário real do Supabase.
+
+Comunicação entre inventário e saída:
+
+O botão "Despachar este lote" deveria acionar uma função que registra a saída no banco (tabela saída), incluindo o usuário responsável, o lote, a quantidade, data/hora etc.
+O componente de inventário deve chamar essa função de registro de saída, e não apenas exibir um alerta.
+Sugestão de fluxo profissional:
+
+Usuário faz login (ou cadastro).
+Ao clicar em "Despachar este lote", chama-se uma função que:
+Registra a saída na tabela saída (com id do usuário, lote, quantidade, data/hora).
+Atualiza o saldo do lote/produto.
+Atualiza a tela automaticamente.
+O nome do usuário exibido deve ser o do usuário autenticado.
+Próximos passos recomendados:
+
+Garantir autenticação real (login/cadastro).
+Integrar o botão de despacho com a função de registrar saída no banco.
+Exibir sempre o nome do usuário autenticado.

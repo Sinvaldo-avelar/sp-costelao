@@ -15,6 +15,14 @@ export interface Lote {
   nf_entrada: string;
 }
 
+export interface Perfil {
+  id: string;
+  nome: string;
+  email: string;
+  nivel_acesso: string;
+  criado_em: string;
+}
+
 export interface Movimentacao {
   tipo: 'ENTRADA' | 'SAIDA';
   produto_id: string;
@@ -22,4 +30,5 @@ export interface Movimentacao {
   quantidade: number;
   nf_documento: string;
   destino_origem: string;
+  usuario_id?: string;
 }

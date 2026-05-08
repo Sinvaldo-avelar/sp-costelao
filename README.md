@@ -1,4 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+# SP Costelão — Sistema de Estoque de Supermercado
+
+Este projeto é um sistema de controle de estoque para supermercados, desenvolvido com Next.js e Supabase. Ele permite gerenciar entradas, saídas, inventário, relatórios e auditoria de produtos.
+
+## Funcionalidades
+- Cadastro de produtos
+- Entrada e saída de mercadorias
+- Inventário e balanço
+- Relatórios detalhados
+- Alertas de estoque crítico
+- Controle de acesso por setor/perfil (RBAC)
+- Logs de auditoria
+
+## Estrutura do Projeto
+
+- `src/app/` — Páginas e rotas
+- `src/components/` — Componentes reutilizáveis
+- `src/hooks/` — Hooks customizados
+- `src/contexts/` — Contextos globais (ex: autenticação)
+- `src/middlewares/` — Middlewares para proteção de rotas
+- `src/lib/` — Utilitários, validação, logger
+- `src/tests/` — Testes automatizados
+- `types/` — Tipos TypeScript
+
+## Segurança
+- Autenticação via Supabase
+- Proteção de rotas e RBAC
+- Validação e sanitização de dados com Zod
+- Variáveis sensíveis protegidas em `.env.local`
+
+## Testes
+- Testes unitários com Jest (exemplo em `src/tests/exemplo.test.ts`)
+- Recomenda-se adicionar mais testes para lógica de negócio e componentes
+
+## Como rodar o projeto
+
+1. Instale as dependências:
+	```bash
+	npm install
+	```
+2. Configure o arquivo `.env.local` com as chaves do Supabase
+3. Rode o servidor de desenvolvimento:
+	```bash
+	npm run dev
+	```
+4. Acesse [http://localhost:3000](http://localhost:3000)
+
+## Contribuição
+Sugestões e melhorias são bem-vindas! Veja o código e contribua.
+
+---
+Projeto inicial baseado em [Next.js](https://nextjs.org) e [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
 

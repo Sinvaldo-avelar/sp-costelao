@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { supabase } from '@/src/lib/supabase'
+import toast from 'react-hot-toast'
 
 export default function FormCadastroProduto() {
   const [nome, setNome] = useState('')
@@ -27,15 +28,15 @@ export default function FormCadastroProduto() {
     setCarregando(false)
 
     if (error) {
-      alert('Erro ao salvar no banco: ' + error.message)
+      toast.error('Erro ao salvar no banco: ' + error.message)
     } else {
-      alert('Produto cadastrado com sucesso!')
+      toast.success('Produto cadastrado com sucesso!')
       // Limpa os campos
       setNome('')
       setMarca('')
       setMinimo(0)
       // Atualiza a página para mostrar o novo item na tabela
-      window.location.reload()
+      setTimeout(() => window.location.reload(), 1500)
     }
   }
 

@@ -29,30 +29,16 @@ export default function HomePage() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-4xl relative z-10">
         
-        {/* CARD SETOR ESTOQUE */}
-        <Link href="/estoque" className="group">
+        {/* CARD ESTOQUE -> Redirecionado para LOGIN */}
+        <Link href="/login" className="group col-span-1 md:col-span-2 max-w-lg mx-auto w-full">
           <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl border-2 border-transparent group-hover:border-red-600 transition-all h-72 flex flex-col items-center justify-center text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-5 text-8xl group-hover:scale-110 transition-transform">📦</div>
-            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform">🏭</div>
-            <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Logística & Estoque</h2>
-            <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Controle de Lotes e Inventário</p>
+            <div className="absolute top-0 right-0 p-4 opacity-5 text-8xl group-hover:scale-110 transition-transform">🔒</div>
+            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform">🔑</div>
+            <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Fazer Login</h2>
+            <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Acessar o Sistema do Costelão</p>
             
             <div className="mt-6 px-6 py-2 bg-red-600 text-white text-[10px] font-black rounded-full opacity-0 group-hover:opacity-100 transition-all">
-              ACESSAR DEPARTAMENTO
-            </div>
-          </div>
-        </Link>
-
-        {/* CARD SETOR COMPRAS */}
-        <Link href="/compras" className="group">
-          <div className="bg-white p-8 rounded-[2.5rem] shadow-2xl border-2 border-transparent group-hover:border-emerald-500 transition-all h-72 flex flex-col items-center justify-center text-center relative overflow-hidden">
-             <div className="absolute top-0 right-0 p-4 opacity-5 text-8xl group-hover:scale-110 transition-transform">🛒</div>
-            <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform">💰</div>
-            <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tight">Setor de Compras</h2>
-            <p className="text-xs text-slate-400 mt-2 font-bold uppercase tracking-widest">Gestão de Pedidos e Fornecedores</p>
-            
-            <div className="mt-6 px-6 py-2 bg-emerald-500 text-white text-[10px] font-black rounded-full opacity-0 group-hover:opacity-100 transition-all">
-              ACESSAR DEPARTAMENTO
+              ENTRAR NO SISTEMA
             </div>
           </div>
         </Link>

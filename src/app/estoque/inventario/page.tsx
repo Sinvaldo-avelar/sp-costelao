@@ -1,8 +1,11 @@
-'use client'
+"use client";
 import { useEffect, useState } from 'react'
 import { supabase } from '@/src/lib/supabase'
+import { useRouter } from 'next/navigation'
 
 export default function InventarioEstrategicoPage() {
+  const router = useRouter();
+
   const [produtos, setProdutos] = useState<any[]>([])
   const [busca, setBusca] = useState('') // Estado para a barra de busca
   const [carregando, setCarregando] = useState(true)
@@ -32,6 +35,17 @@ export default function InventarioEstrategicoPage() {
   }
 
   useEffect(() => { carregarDados() }, [])
+
+  const handleDespacharRoute = (lote: any, isPrioridade: boolean) => {
+    if (!isPrioridade) {
+      const audio = new Audio('https://cdn.pixabay.com/audio/2022/07/26/audio_124bfae1b2.mp3');
+      audio.play().catch(() => {});
+      if (!window.confirm('Este não é o lote mais antigo! Confirma saída fora da ordem PEPS?')) return;
+    }
+
+    // Redireciona para a página de saída com o loteId já selecionado
+    router.push(`/estoque/saida?loteId=${lote.id}`);
+  }
 
   // FILTRO EM TEMPO REAL: Filtra por nome do produto ou marca
   const produtosFiltrados = produtos.filter(p => 
@@ -118,6 +132,15 @@ export default function InventarioEstrategicoPage() {
                               ) : (
                                 <span className="text-slate-400 font-bold pl-5">{index + 1}º da Fila</span>
                               )}
+                            </td>
+                            {/* Botão de ação rápida */}
+                            <td colSpan={5} className="p-4">
+                              <button
+                                className={`btn ${isPrioridade ? 'btn-accent' : 'btn-danger'} text-xs px-4 py-2`}
+                                onClick={() => handleDespacharRoute(lote, isPrioridade)}
+                              >
+                                Despachar este lote
+                              </button>
                             </td>
                             <td className="p-4 font-black text-slate-700 tracking-tight">
                               {lote.numero_lote || 'NÃO INFORMADO'}

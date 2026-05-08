@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import FormSaidaLote from '@/src/components/FormSaidaLote';
 
 export default function SaidaPage() {
@@ -15,7 +16,9 @@ export default function SaidaPage() {
 
       {/* Formulário de Saída */}
       <div className="bg-white p-6 rounded-3xl shadow-xl border border-slate-100">
-        <FormSaidaLote />
+        <Suspense fallback={<div className="p-4 text-center font-bold text-slate-400">Carregando formulário...</div>}>
+          <FormSaidaLote />
+        </Suspense>
       </div>
 
       <div className="mt-8 p-4 bg-red-50 rounded-2xl border border-red-100 flex items-center gap-3">

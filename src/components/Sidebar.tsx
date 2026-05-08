@@ -70,12 +70,16 @@ export default function Sidebar() {
           <span>🛒</span> COMPRAS
         </Link>
         
-        <Link 
-          href="/" 
-          className="flex items-center gap-3 p-3 rounded-xl text-xs font-black text-slate-500 hover:bg-red-900/30 hover:text-red-400 transition-all"
+        <button 
+          onClick={async () => {
+            const { supabase } = await import('@/src/lib/supabase')
+            await supabase.auth.signOut()
+            window.location.href = '/'
+          }}
+          className="w-full flex items-center gap-3 p-3 rounded-xl text-xs font-black text-slate-500 hover:bg-red-900/30 hover:text-red-400 transition-all"
         >
           <span>⬅</span> SAIR DO SISTEMA
-        </Link>
+        </button>
       </div>
     </aside>
   )

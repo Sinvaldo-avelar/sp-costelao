@@ -1,8 +1,15 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #111111;
+  --foreground: #fff;
+  --primary: #111111;
+  --secondary: #232323;
+  --accent: #16a34a; /* Verde destaque */
+  --danger: #dc2626;
+  --border: #222;
+  --card-bg: #fff;
+  --card-border: #111;
 }
 
 @theme inline {
@@ -16,6 +23,8 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --card-bg: #181818;
+    --card-border: #333;
   }
 }
 
@@ -23,4 +32,75 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Botões padrão */
+.btn {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 1.5rem;
+  padding: 0.75rem 2rem;
+  font-weight: bold;
+  border: none;
+  transition: background 0.2s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+.btn:hover, .btn:focus {
+  background: var(--secondary);
+}
+.btn-accent {
+  background: var(--accent);
+  color: #fff;
+}
+.btn-danger {
+  background: var(--danger);
+  color: #fff;
+}
+
+/* Inputs padrão */
+input, select, textarea {
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  padding: 0.75rem 1.25rem;
+  background: #fff;
+  color: var(--primary);
+  font-weight: 500;
+  outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent)33;
+}
+
+/* Cards e painéis */
+.card {
+  background: var(--card-bg);
+  border: 2px solid var(--card-border);
+  border-radius: 2rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+/* Headers e títulos */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary);
+  font-family: inherit;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+}
+
+/* Divisores */
+.divider {
+  border-bottom: 2px solid var(--primary);
+  margin: 2rem 0;
+}
+
+/* Logotipo (exemplo) */
+.logo {
+  height: 48px;
+  width: auto;
+  display: block;
+  margin-bottom: 1.5rem;
 }
