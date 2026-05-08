@@ -1,4 +1,4 @@
 // Utilitário para extrair valores únicos de um array de objetos
-export function valoresUnicos(arr, campo) {
-  return Array.from(new Set(arr.map(item => item[campo]).filter(Boolean)));
+export function valoresUnicos<T = any>(arr: any[], campo: string): T[] {
+  return Array.from(new Set(arr.map(item => item[campo]).filter(Boolean))) as T[];
 }

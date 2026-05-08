@@ -1,7 +1,7 @@
 // Exemplo de função para log de auditoria de movimentações
 import { logEvento } from '../lib/logger';
 
-export function registrarAuditoria(acao: string, usuario: string, detalhes: unknown) {
+export function registrarAuditoria(acao: string, usuario: string, detalhes: Record<string, any> = {}) {
   logEvento(`AUDITORIA: ${acao}`, { usuario, ...detalhes });
 }
 

@@ -59,7 +59,7 @@ export default function FormEntradaLote() {
       lote: loteNumero
     })
     if (!validacao.success) {
-      toast.error('Erro de validação: ' + validacao.error.errors.map(e => e.message).join(', '))
+      toast.error('Erro de validação: ' + validacao.error.message)
       return
     }
 

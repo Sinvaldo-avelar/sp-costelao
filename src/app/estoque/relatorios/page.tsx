@@ -23,10 +23,10 @@ export default function RelatoriosPage() {
   const [movsFiltradas, setMovsFiltradas] = useState<any[]>([])
   const [resumo, setResumo] = useState<any[]>([])
   const [carregando, setCarregando] = useState(false)
-  const [produtoFiltro, setProdutoFiltro] = useState(null)
-  const [marcaFiltro, setMarcaFiltro] = useState(null)
-  const [tipoFiltro, setTipoFiltro] = useState(null)
-  const [destinoFiltro, setDestinoFiltro] = useState(null)
+  const [produtoFiltro, setProdutoFiltro] = useState<{value: string, label: string} | null>(null)
+  const [marcaFiltro, setMarcaFiltro] = useState<{value: string, label: string} | null>(null)
+  const [tipoFiltro, setTipoFiltro] = useState<{value: string, label: string} | null>(null)
+  const [destinoFiltro, setDestinoFiltro] = useState<{value: string, label: string} | null>(null)
 
   // FUNÇÃO DE FORMATAÇÃO: Exibe a quantidade e a sigla da unidade (ex: 20 FD, 1,450 KG)
   const exibirQtdComUnidade = (valor: number, unidade: string) => {
@@ -128,7 +128,7 @@ export default function RelatoriosPage() {
         <div className="flex flex-col gap-2 min-w-[180px]">
           <span className="text-[10px] font-black uppercase text-slate-500">Produto</span>
           <Select
-            options={valoresUnicos(movimentacoes, 'produtos').map(p => ({ label: p?.nome, value: p?.nome }))}
+            options={valoresUnicos<any>(movimentacoes, 'produtos').map((p: any) => ({ label: p?.nome, value: p?.nome }))}
             value={produtoFiltro}
             onChange={setProdutoFiltro}
             isClearable
@@ -139,7 +139,7 @@ export default function RelatoriosPage() {
         <div className="flex flex-col gap-2 min-w-[140px]">
           <span className="text-[10px] font-black uppercase text-slate-500">Marca</span>
           <Select
-            options={valoresUnicos(movimentacoes, 'produtos').map(p => ({ label: p?.marca, value: p?.marca })).filter(o => o.value)}
+            options={valoresUnicos<any>(movimentacoes, 'produtos').map((p: any) => ({ label: p?.marca, value: p?.marca })).filter((o: any) => o.value)}
             value={marcaFiltro}
             onChange={setMarcaFiltro}
             isClearable
@@ -160,7 +160,7 @@ export default function RelatoriosPage() {
         </div>
         <div className="flex flex-col gap-2 min-w-[180px]">
           <span className="text-[10px] font-black uppercase text-slate-500">Destino/Setor</span>
-          <input type="text" value={destinoFiltro?.value || ''} onChange={e => setDestinoFiltro(e.target.value ? { value: e.target.value } : null)} placeholder="Todos" className="border-2 border-slate-200 rounded-xl p-2 text-sm font-bold outline-none focus:border-red-600" />
+          <input type="text" value={destinoFiltro?.value || ''} onChange={e => setDestinoFiltro(e.target.value ? { value: e.target.value, label: e.target.value } : null)} placeholder="Todos" className="border-2 border-slate-200 rounded-xl p-2 text-sm font-bold outline-none focus:border-red-600" />
         </div>
         <button onClick={gerarRelatorioCompleto} className="bg-slate-900 text-white px-8 py-3 rounded-xl text-xs font-black uppercase hover:scale-105 transition-all">
           {carregando ? 'GERANDO...' : 'CONSULTAR ESTOQUE'}

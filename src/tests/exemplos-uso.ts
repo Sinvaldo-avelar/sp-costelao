@@ -9,7 +9,7 @@ const resultado = validarProduto({ nome: 'Arroz', quantidade: 10, unidade: 'kg',
 if (resultado.success) {
   logEvento('produto_validado', resultado.data);
 } else {
-  logEvento('erro_validacao', resultado.error.errors);
+  logEvento('erro_validacao', resultado.error.message);
 }
 
 // 2. Logging de evento
