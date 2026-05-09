@@ -28,6 +28,10 @@ export default function RelatoriosPage() {
   const [tipoFiltro, setTipoFiltro] = useState<{value: string, label: string} | null>(null)
   const [destinoFiltro, setDestinoFiltro] = useState<{value: string, label: string} | null>(null)
 
+  // Estado para modal do gráfico
+  const [modalAberto, setModalAberto] = useState(false)
+  const [produtoGrafico, setProdutoGrafico] = useState<{value: string, label: string} | null>(null)
+
   // FUNÇÃO DE FORMATAÇÃO: Exibe a quantidade e a sigla da unidade (ex: 20 FD, 1,450 KG)
   const exibirQtdComUnidade = (valor: number, unidade: string) => {
     const numeroFormatado = Number.isInteger(valor) 
@@ -45,7 +49,7 @@ export default function RelatoriosPage() {
 
     const { data: movs, error } = await supabase
       .from('historico_estoque')
-      .select(`*, produtos ( nome, marca, unidade_medida, estoque_minimo ), lotes ( numero_lote )`)
+      .select(`*, produtos ( nome, marca, unidade_medida, estoque_minimo ), lotes ( numero_lote ), responsavel`) // ajuste: inclui campo responsavel
       .gte('data_movimentacao', dataInicio + 'T00:00:00Z')
       .lte('data_movimentacao', dataFim + 'T23:59:59Z')
       .order('data_movimentacao', { ascending: false })
@@ -167,42 +171,73 @@ export default function RelatoriosPage() {
         </button>
       </div>
 
-      {/* 1.1 GRÁFICO DE ENTRADAS/SAÍDAS */}
+      {/* BOTÃO PARA ABRIR O MODAL DO GRÁFICO */}
       {resumo.length > 0 && (
-        <section className="space-y-4">
-          <h2 className="text-[11px] font-black bg-emerald-600 text-white px-4 py-2 rounded-full inline-block uppercase tracking-widest italic">Gráfico de Entradas/Saídas</h2>
-          <div className="bg-white rounded-2xl p-4 shadow-md">
-            <Bar
-              data={{
-                labels: resumo.map(r => r.nome),
-                datasets: [
-                  {
-                    label: 'Entradas',
-                    data: resumo.map(r => r.totalEntradas),
-                    backgroundColor: 'rgba(16, 185, 129, 0.7)'
+        <div className="flex justify-end">
+          <button
+            className="bg-emerald-600 text-white px-6 py-2 text-xs font-black uppercase rounded-full hover:bg-emerald-700 transition-all shadow-lg"
+            onClick={() => setModalAberto(true)}
+          >
+            Ver Gráfico de Entradas/Saídas
+          </button>
+        </div>
+      )}
+
+      {/* MODAL DO GRÁFICO */}
+      {modalAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-2xl p-6 shadow-2xl max-w-3xl w-full relative">
+            <button
+              className="absolute top-2 right-2 text-slate-500 hover:text-red-600 text-xl font-black"
+              onClick={() => setModalAberto(false)}
+              aria-label="Fechar"
+            >
+              ×
+            </button>
+            <h2 className="text-[13px] font-black bg-emerald-600 text-white px-4 py-2 rounded-full inline-block uppercase tracking-widest italic mb-4">Saídas por Marca</h2>
+            <div className="mb-4 max-w-xs">
+              <Select
+                options={valoresUnicos<any>(movimentacoes, 'produtos').map((p: any) => ({ label: p?.nome, value: p?.nome }))}
+                value={produtoGrafico}
+                onChange={setProdutoGrafico}
+                isClearable
+                placeholder="Selecione o produto"
+                classNamePrefix="react-select"
+              />
+            </div>
+            {produtoGrafico ? (
+              <Bar
+                data={{
+                  labels: valoresUnicos<any>(movimentacoes.filter(m => m.produtos?.nome === produtoGrafico.value), 'produtos').map((p: any) => p?.marca),
+                  datasets: [
+                    {
+                      label: 'Saídas',
+                      data: valoresUnicos<any>(movimentacoes.filter(m => m.produtos?.nome === produtoGrafico.value), 'produtos').map((p: any) => {
+                        // Soma as saídas desse produto e marca
+                        return movimentacoes.filter(m => m.produtos?.nome === produtoGrafico.value && m.produtos?.marca === p?.marca && m.tipo === 'SAIDA').reduce((acc, cur) => acc + cur.quantidade, 0)
+                      }),
+                      backgroundColor: 'rgba(239, 68, 68, 0.7)'
+                    }
+                  ]
+                }}
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: { position: 'top' as const },
+                    title: { display: false }
                   },
-                  {
-                    label: 'Saídas',
-                    data: resumo.map(r => r.totalSaidas),
-                    backgroundColor: 'rgba(239, 68, 68, 0.7)'
+                  scales: {
+                    x: { ticks: { color: '#111' } },
+                    y: { ticks: { color: '#111' } }
                   }
-                ]
-              }}
-              options={{
-                responsive: true,
-                plugins: {
-                  legend: { position: 'top' as const },
-                  title: { display: false }
-                },
-                scales: {
-                  x: { ticks: { color: '#111' } },
-                  y: { ticks: { color: '#111' } }
-                }
-              }}
-              height={120}
-            />
+                }}
+                height={120}
+              />
+            ) : (
+              <div className="text-slate-500 text-sm italic">Selecione um produto para visualizar o gráfico.</div>
+            )}
           </div>
-        </section>
+        </div>
       )}
 
       {/* 1. SEÇÃO: RESUMO CONSOLIDADO */}
@@ -258,6 +293,7 @@ export default function RelatoriosPage() {
               <th className="p-3 text-left">Validade</th>
               <th className="p-3 text-left">Depósito</th>
               <th className="p-3 text-left">Destino</th>
+              <th className="p-3 text-left">Responsável</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-50">
@@ -268,7 +304,7 @@ export default function RelatoriosPage() {
                   {m.produtos?.nome} <br/>
                   <span className="text-[8px] text-slate-400 font-bold">MARCA: {m.produtos?.marca}</span>
                 </td>
-                <td className={`p-3 text-center font-black ${m.tipo === 'ENTRADA' ? 'text-emerald-600' : 'text-red-600'}`}>
+                <td className={`p-3 text-center font-black ${m.tipo === 'ENTRADA' ? 'text-emerald-600' : 'text-red-600'}`}> 
                   {m.tipo}
                 </td>
                 <td className="p-3 text-right font-black text-sm">
@@ -278,6 +314,7 @@ export default function RelatoriosPage() {
                 <td className="p-3 text-slate-700 font-mono text-xs">{m.data_validade ? new Date(m.data_validade).toLocaleDateString('pt-BR') : '---'}</td>
                 <td className="p-3 text-slate-700 font-mono text-xs">{m.deposito_nome || '---'}</td>
                 <td className="p-3 text-slate-500 italic uppercase font-bold text-[9px] max-w-[200px] truncate">{m.destino || '---'}</td>
+                <td className="p-3 text-slate-700 font-mono text-xs">{m.responsavel || '---'}</td>
               </tr>
             ))}
           </tbody>
