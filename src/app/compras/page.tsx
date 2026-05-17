@@ -1,3 +1,4 @@
+"use client";
 import PainelCompras from '../../components/PainelCompras';
 import AlertaEstoqueCritico from '../../components/AlertaEstoqueCritico';
 import LoginSetor from '../../components/LoginSetor';

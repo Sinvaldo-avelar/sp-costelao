@@ -1,17 +1,18 @@
-  // Função para excluir produto
-  async function excluirProduto(id: string) {
-    if (!window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita!')) return;
-    setCarregando(true);
-    const { error } = await supabase.from('produtos').delete().eq('id', id);
-    if (error) {
-      toast.error('Erro ao excluir produto: ' + error.message);
-    } else {
-      toast.success('Produto excluído com sucesso!');
-      setProdutos(produtos.filter(p => p.id !== id));
-    }
-    setCarregando(false);
+"use client";
+
+// Função para excluir produto
+async function excluirProduto(id: string) {
+  if (!window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita!')) return;
+  setCarregando(true);
+  const { error } = await supabase.from('produtos').delete().eq('id', id);
+  if (error) {
+    toast.error('Erro ao excluir produto: ' + error.message);
+  } else {
+    toast.success('Produto excluído com sucesso!');
+    setProdutos(produtos.filter(p => p.id !== id));
   }
-'use client'
+  setCarregando(false);
+}
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
 import { exportarParaExcel } from '../lib/exportarExcel'
