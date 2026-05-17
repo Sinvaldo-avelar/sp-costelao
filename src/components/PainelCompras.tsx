@@ -24,23 +24,32 @@ export default function PainelCompras() {
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
+    "use client";
+
+    import { useState, useEffect } from 'react'
     async function carregarDados() {
       const { data, error } = await supabase
         .from('produtos')
         .select(`*, lotes (*)`)
         .order('nome', { ascending: true })
+    export default function PainelCompras() {
+      const [produtos, setProdutos] = useState<any[]>([])
+      const [busca, setBusca] = useState('')
+      const [carregando, setCarregando] = useState(true)
 
-      if (error) {
-        console.error("Erro ao carregar:", error.message)
-        toast.error('Erro ao carregar produtos.')
-      } else {
-        setProdutos(data || [])
+      // Função para excluir produto agora dentro do componente
+      async function excluirProduto(id: string) {
+        if (!window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita!')) return;
+        setCarregando(true);
+        const { error } = await supabase.from('produtos').delete().eq('id', id);
+        if (error) {
+          toast.error('Erro ao excluir produto: ' + error.message);
+        } else {
+          toast.success('Produto excluído com sucesso!');
+          setProdutos(produtos.filter(p => p.id !== id));
+        }
+        setCarregando(false);
       }
-      setCarregando(false)
-    }
-    carregarDados()
-  }, [])
-
   const produtosAbaixoMinimo = produtos.map(p => {
     const totalAtual = p.lotes?.reduce((acc: number, l: any) => acc + l.quantidade_atual, 0) || 0
     return {
