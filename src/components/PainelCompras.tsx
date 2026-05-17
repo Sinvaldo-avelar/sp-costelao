@@ -11,32 +11,22 @@ export default function PainelCompras() {
   const [carregando, setCarregando] = useState(true)
 
   useEffect(() => {
-    "use client";
-
-    import { useState, useEffect } from 'react'
     async function carregarDados() {
       const { data, error } = await supabase
         .from('produtos')
         .select(`*, lotes (*)`)
         .order('nome', { ascending: true })
-    export default function PainelCompras() {
-      const [produtos, setProdutos] = useState<any[]>([])
-      const [busca, setBusca] = useState('')
-      const [carregando, setCarregando] = useState(true)
-
-      // Função para excluir produto agora dentro do componente
-      async function excluirProduto(id: string) {
-        if (!window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita!')) return;
-        setCarregando(true);
-        const { error } = await supabase.from('produtos').delete().eq('id', id);
-        if (error) {
-          toast.error('Erro ao excluir produto: ' + error.message);
-        } else {
-          toast.success('Produto excluído com sucesso!');
-          setProdutos(produtos.filter(p => p.id !== id));
-        }
-        setCarregando(false);
+      if (error) {
+        console.error("Erro ao carregar:", error.message)
+        toast.error('Erro ao carregar produtos.')
+      } else {
+        setProdutos(data || [])
       }
+      setCarregando(false)
+    }
+    carregarDados();
+  }, [])
+
   const produtosAbaixoMinimo = produtos.map(p => {
     const totalAtual = p.lotes?.reduce((acc: number, l: any) => acc + l.quantidade_atual, 0) || 0
     return {
@@ -66,7 +56,7 @@ export default function PainelCompras() {
       Unidade: p.unidade_medida || 'UN',
       'Estoque Atual': p.totalAtual,
       'Estoque Mínimo': p.estoque_minimo,
-      'Quantidade Sugerida p/ Compra': p.faltante + Math.ceil(p.estoque_minimo * 0.2) // Sugere compl/ + 20% margem
+      'Quantidade Sugerida p/ Compra': p.faltante + Math.ceil(p.estoque_minimo * 0.2)
     }))
 
     exportarParaExcel(dadosExportacao, 'Sugestao_Compras_Costelao.xlsx')
@@ -197,19 +187,11 @@ export default function PainelCompras() {
                       {statusCritico ? 'FALTA NO ESTOQUE' : 'SALDO DISPONÍVEL'}
                     </span>
                   </div>
-                  <div className="text-right flex flex-col items-end gap-2">
+                  <div className="text-right flex flex-col items-end">
                     <p className={`text-3xl font-black leading-none ${statusCritico ? 'text-red-600' : 'text-slate-800'}`}> 
                       {totalAtual.toFixed(2)}
                     </p>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase">{produto.unidade_medida}</p>
-                    <button
-                      className="mt-2 px-2 py-1 text-xs bg-red-100 text-red-700 rounded font-bold hover:bg-red-200 transition-colors border border-red-200"
-                      title="Excluir produto"
-                      onClick={() => excluirProduto(produto.id)}
-                      disabled={carregando}
-                    >
-                      🗑️ Excluir
-                    </button>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">{produto.unidade_medida}</p>
                   </div>
                 </div>
 
