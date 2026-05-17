@@ -1,3 +1,16 @@
+  // Função para excluir produto
+  async function excluirProduto(id: string) {
+    if (!window.confirm('Tem certeza que deseja excluir este produto? Esta ação não pode ser desfeita!')) return;
+    setCarregando(true);
+    const { error } = await supabase.from('produtos').delete().eq('id', id);
+    if (error) {
+      toast.error('Erro ao excluir produto: ' + error.message);
+    } else {
+      toast.success('Produto excluído com sucesso!');
+      setProdutos(produtos.filter(p => p.id !== id));
+    }
+    setCarregando(false);
+  }
 'use client'
 import { useState, useEffect } from 'react'
 import { supabase } from '../lib/supabase'
@@ -75,21 +88,21 @@ export default function PainelCompras() {
       
       {/* 1. INDICADORES DE DESEMPENHO (Estilo Dashboard Moderno) */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <div className="bg-white p-6 rounded-[2rem] shadow-xl border-l-8 border-slate-800 relative overflow-hidden group col-span-1">
+        <div className="bg-white p-6 rounded-4xl shadow-xl border-l-8 border-slate-800 relative overflow-hidden group col-span-1">
           <div className="absolute -right-4 -top-4 text-slate-100 text-8xl font-black group-hover:text-slate-200 transition-colors">#</div>
           <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest relative z-10">Catálogo Total</p>
           <h2 className="text-4xl font-black text-slate-800 italic relative z-10">{totalItens}</h2>
           <p className="text-[9px] text-slate-400 font-bold mt-1 relative z-10">Produtos cadastrados</p>
         </div>
 
-        <div className="bg-white p-6 rounded-[2rem] shadow-xl border-l-8 border-emerald-500 relative overflow-hidden group col-span-1">
+        <div className="bg-white p-6 rounded-4xl shadow-xl border-l-8 border-emerald-500 relative overflow-hidden group col-span-1">
           <div className="absolute -right-4 -top-4 text-emerald-50 text-8xl font-black">L</div>
           <p className="text-[10px] text-slate-400 uppercase font-black tracking-widest relative z-10">Volume de Lotes</p>
           <h2 className="text-4xl font-black text-emerald-600 italic relative z-10">{totalLotes}</h2>
           <p className="text-[9px] text-slate-400 font-bold mt-1 relative z-10">Lotes armazenados</p>
         </div>
 
-        <div className="bg-red-600 p-6 rounded-[2rem] shadow-2xl border-l-8 border-red-900 relative overflow-hidden group col-span-1 md:col-span-2 flex flex-col justify-between">
+        <div className="bg-red-600 p-6 rounded-4xl shadow-2xl border-l-8 border-red-900 relative overflow-hidden group col-span-1 md:col-span-2 flex flex-col justify-between">
           <div className="absolute -right-4 top-0 text-red-700 text-8xl font-black opacity-40">!</div>
           <div>
             <p className="text-[10px] text-red-200 uppercase font-black tracking-widest relative z-10">Urgência de Compra</p>
@@ -187,11 +200,19 @@ export default function PainelCompras() {
                       {statusCritico ? 'FALTA NO ESTOQUE' : 'SALDO DISPONÍVEL'}
                     </span>
                   </div>
-                  <div className="text-right">
-                    <p className={`text-3xl font-black leading-none ${statusCritico ? 'text-red-600' : 'text-slate-800'}`}>
+                  <div className="text-right flex flex-col items-end gap-2">
+                    <p className={`text-3xl font-black leading-none ${statusCritico ? 'text-red-600' : 'text-slate-800'}`}> 
                       {totalAtual.toFixed(2)}
                     </p>
                     <p className="text-[9px] font-bold text-slate-400 uppercase">{produto.unidade_medida}</p>
+                    <button
+                      className="mt-2 px-2 py-1 text-xs bg-red-100 text-red-700 rounded font-bold hover:bg-red-200 transition-colors border border-red-200"
+                      title="Excluir produto"
+                      onClick={() => excluirProduto(produto.id)}
+                      disabled={carregando}
+                    >
+                      🗑️ Excluir
+                    </button>
                   </div>
                 </div>
 

@@ -45,7 +45,7 @@ export default function LoginSetor({ children, setor }: LoginProps) {
         
         {/* LOGO DO COSTELÃO */}
         <div className="w-24 h-24 relative mb-6 rounded-full overflow-hidden border-4 border-slate-100 shadow-lg">
-          <Image src="/costelão.jpeg" alt="Logo Costelão" fill className="object-cover" />
+          <Image src="/costelão.jpeg" alt="Logo Costelão" fill sizes="100vw" className="object-cover" />
         </div>
 
         <h2 className="text-2xl font-black text-slate-800 uppercase tracking-tighter text-center">

@@ -17,6 +17,11 @@ import Select from 'react-select'
 import { valoresUnicos } from '@/src/lib/valoresUnicos'
 
 export default function RelatoriosPage() {
+    const [dataHora, setDataHora] = useState<string | null>(null);
+
+    useEffect(() => {
+      setDataHora(new Date().toLocaleString('pt-BR'));
+    }, []);
   const [dataInicio, setDataInicio] = useState('')
   const [dataFim, setDataFim] = useState('')
   const [movimentacoes, setMovimentacoes] = useState<any[]>([])
@@ -322,7 +327,7 @@ export default function RelatoriosPage() {
       </section>
 
       <footer className="mt-12 pt-4 border-t-2 border-slate-100 text-[10px] text-slate-400 flex justify-between uppercase font-black italic">
-        <span>Extraído em: {new Date().toLocaleString('pt-BR')}</span>
+        <span>Extraído em: {dataHora ?? ""}</span>
         <span>Supermercado Costelão - Gestão de Logística</span>
       </footer>
     </div>
